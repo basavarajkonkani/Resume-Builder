@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import FormSection from './components/FormSection';
 import ResumePreview from './components/ResumePreview';
+import SignIn from './components/SignIn';
 import './App.css';
+import './animations.css';
 
 function App() {
   // State to hold resume data
@@ -29,6 +31,13 @@ function App() {
   
   // State for loading
   const [loading, setLoading] = useState(false);
+  
+  // State for sign-in modal
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  
+  // State for user data
+  const [user, setUser] = useState(null);
+
 
   // Available templates
   const templates = [
@@ -337,12 +346,40 @@ function App() {
     }
   };
   
+  // Handle sign in
+  const handleSignIn = (userData) => {
+    setUser(userData);
+    // Save user data to localStorage
+    localStorage.setItem('user', JSON.stringify(userData));
+    showNotification(`Welcome, ${userData.name}!`, 'success');
+  };
+  
+  // Handle sign out
+  const handleSignOut = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    showNotification('You have been signed out', 'info');
+  };
+  
+  // Check for existing user session on component mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    }
+  }, []);
+
+  
   // Fill with sample data
   const fillSampleData = () => {
     if (window.confirm('This will replace your current data with sample data. Continue?')) {
       const sampleData = {
-        fullName: 'John Doe',
-        email: 'john.doe@example.com',
+        fullName: user ? user.name : 'John Doe',
+        email: user ? user.email : 'john.doe@example.com',
         phone: '(123) 456-7890',
         address: 'New York, NY',
         education: [
@@ -433,20 +470,82 @@ function App() {
   return (
     <div className={`app ${theme}`}>
       <header className="app-header">
-        <h1>Resume Builder</h1>
+        <div className="logo-container">
+          <div className="logo-text">Resume <span>Builder</span></div>
+        </div>
         <div className="header-controls">
+          <div className="nav-links">
+            <a href="#" className="nav-link">Resume</a>
+            <a href="#" className="nav-link">Cover Letter</a>
+          </div>
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
           </button>
+          {user ? (
+            <div className="user-menu">
+              <button className="user-button">
+                <span className="user-avatar">{user.name.charAt(0).toUpperCase()}</span>
+                <span className="user-name">{user.name}</span>
+              </button>
+              <div className="user-dropdown">
+                <div className="user-info">
+                  <p className="user-email">{user.email}</p>
+                </div>
+                <button className="sign-out-btn" onClick={handleSignOut}>
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button 
+              className="sign-in-btn"
+              onClick={() => setIsSignInOpen(true)}
+            >
+              Sign in
+            </button>
+          )}
           <button 
-            className="export-btn" 
-            onClick={exportToPDF}
-            disabled={loading}
+            className="get-started-btn" 
+            onClick={() => document.querySelector('.app-container').scrollIntoView({ behavior: 'smooth' })}
           >
-            {loading ? <span className="spinner"></span> : '📄'} {loading ? 'Exporting...' : 'Export PDF'}
+            Get Started
           </button>
         </div>
       </header>
+      
+      {/* Service Announcement Banner like Indeed's */}
+      <div className="service-announcement">
+        <div className="announcement-icon">ℹ️</div>
+        <p className="announcement-text">
+          Download your resumes now. This resume builder tool will no longer be available after September 15, 2025.
+        </p>
+        <button className="close-announcement" onClick={(e) => e.target.parentNode.style.display = 'none'}>×</button>
+      </div>
+      
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">Get dream jobs with our<br /><span className="highlight">AI Powered</span> resume builder</h1>
+          <p className="hero-description">Build a professional and outstanding resume with our free builder and templates.</p>
+          <div className="hero-buttons">
+            <button className="hero-btn primary" onClick={() => document.querySelector('.app-container').scrollIntoView({ behavior: 'smooth' })}>
+              Create my resume
+            </button>
+            <button className="hero-btn secondary" onClick={() => showNotification('Upload functionality coming soon!', 'info')}>
+              Upload resume
+            </button>
+          </div>
+        </div>
+        <div className="hero-image">
+          <div className="resume-image-container">
+            <ResumePreview 
+              resumeData={resumeData} 
+              theme={theme} 
+              template={selectedTemplate}
+            />
+          </div>
+        </div>
+      </div>
       
       <div className="quick-actions">
         <button className="action-btn primary" onClick={fillSampleData}>
@@ -492,8 +591,9 @@ function App() {
         <div className="preview-section">
           <h2>Resume Preview</h2>
           <div className="preview-actions">
-            <button className="action-btn" onClick={exportToPDF}>
-              <span className="btn-icon">📥</span> Download PDF
+            <button className="action-btn primary" onClick={exportToPDF} disabled={loading}>
+              {loading ? <span className="spinner"></span> : <span className="btn-icon">📥</span>} 
+              {loading ? 'Exporting...' : 'Download PDF'}
             </button>
           </div>
           <ResumePreview 
@@ -506,9 +606,27 @@ function App() {
       
       {notification.show && (
         <div className={`toast ${notification.type}`}>
-          {notification.type === 'success' ? '✅' : '❌'} {notification.message}
+          {notification.type === 'success' ? '✅' : notification.type === 'info' ? 'ℹ️' : '❌'} {notification.message}
         </div>
       )}
+      
+      <footer className="app-footer">
+        <div className="footer-content">
+          <p>&copy; {new Date().getFullYear()} Resume Builder. All rights reserved.</p>
+          <div className="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact Us</a>
+          </div>
+        </div>
+      </footer>
+      
+      {/* Sign In Modal */}
+      <SignIn 
+        isOpen={isSignInOpen} 
+        onClose={() => setIsSignInOpen(false)} 
+        onSignIn={handleSignIn} 
+      />
     </div>
   );
 }

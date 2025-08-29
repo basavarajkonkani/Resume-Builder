@@ -570,7 +570,7 @@ const FormSection = ({
         </button>
       </div>
       <p className="section-description">
-        List languages you speak and your proficiency level for each.
+        List languages you speak and your proficiency level for each. This helps employers understand your communication capabilities.
       </p>
       
       {resumeData.languages.length === 0 ? (
@@ -591,25 +591,56 @@ const FormSection = ({
                   placeholder="e.g. English, Spanish, French"
                   required
                 />
+                <div className="form-tip">
+                  Enter the full name of the language you speak
+                </div>
               </div>
               
               <div className="form-group">
-                <label>Proficiency</label>
+                <label>Proficiency Level</label>
                 <select
                   value={lang.proficiency}
                   onChange={(e) => handleValidatedArrayChange('languages', index, 'proficiency', e.target.value)}
                 >
                   <option value="">Select Proficiency</option>
-                  <option value="Beginner">Beginner - Basic understanding</option>
-                  <option value="Intermediate">Intermediate - Conversational ability</option>
-                  <option value="Advanced">Advanced - Near-native proficiency</option>
-                  <option value="Fluent">Fluent - Excellent command</option>
-                  <option value="Native">Native - First language</option>
+                  <option value="Beginner">Beginner - Basic understanding and simple phrases</option>
+                  <option value="Intermediate">Intermediate - Conversational ability and general topics</option>
+                  <option value="Advanced">Advanced - Near-native proficiency with complex topics</option>
+                  <option value="Fluent">Fluent - Excellent command with native-like accuracy</option>
+                  <option value="Native">Native - First language or equivalent proficiency</option>
                 </select>
                 <div className="form-tip">
                   Select your proficiency level in this language
                 </div>
               </div>
+            </div>
+            
+            <div className="proficiency-description">
+              {lang.proficiency === 'Beginner' && (
+                <div className="proficiency-info beginner">
+                  <strong>Beginner:</strong> Can understand and use basic phrases, introduce yourself, and ask simple questions.
+                </div>
+              )}
+              {lang.proficiency === 'Intermediate' && (
+                <div className="proficiency-info intermediate">
+                  <strong>Intermediate:</strong> Can hold conversations on familiar topics, understand the main points of discussions, and express opinions.
+                </div>
+              )}
+              {lang.proficiency === 'Advanced' && (
+                <div className="proficiency-info advanced">
+                  <strong>Advanced:</strong> Can communicate fluently with only occasional errors, understand complex texts, and express ideas clearly.
+                </div>
+              )}
+              {lang.proficiency === 'Fluent' && (
+                <div className="proficiency-info fluent">
+                  <strong>Fluent:</strong> Can communicate with ease and precision, understand nuanced language, and adapt to different contexts.
+                </div>
+              )}
+              {lang.proficiency === 'Native' && (
+                <div className="proficiency-info native">
+                  <strong>Native:</strong> First language or equivalent proficiency with complete mastery of grammar, vocabulary, and cultural nuances.
+                </div>
+              )}
             </div>
             
             {resumeData.languages.length > 1 && (

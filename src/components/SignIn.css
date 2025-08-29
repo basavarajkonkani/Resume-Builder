@@ -1,0 +1,241 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  animation: slideUp 0.4s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.app.dark .modal-content {
+  background-color: #1e293b;
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #2d2d2d;
+  font-weight: 700;
+}
+
+.app.dark .modal-header h2 {
+  color: #f8fafc;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  color: #6f7378;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #2d2d2d;
+  transform: scale(1.1);
+}
+
+.app.dark .close-btn {
+  color: #94a3b8;
+}
+
+.app.dark .close-btn:hover {
+  color: white;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2d2d2d;
+  font-size: 0.95rem;
+}
+
+.app.dark .form-group label {
+  color: #e2e8f0;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d4d7dc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background-color: white;
+  color: #2d2d2d;
+}
+
+.form-group input:focus {
+  border-color: #2557a7;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 87, 167, 0.2);
+}
+
+.app.dark .form-group input {
+  background-color: #334155;
+  border-color: #475569;
+  color: white;
+}
+
+.app.dark .form-group input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 6px;
+}
+
+.forgot-password a {
+  color: #2557a7;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+.app.dark .forgot-password a {
+  color: #3B82F6;
+}
+
+.error-message {
+  color: #e11900;
+  font-size: 0.9rem;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  padding-left: 2px;
+}
+
+.app.dark .error-message {
+  color: #f87171;
+}
+
+.sign-in-submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #2557a7;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+}
+
+.sign-in-submit-btn:hover {
+  background-color: #1f4893;
+}
+
+.sign-in-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.app.dark .sign-in-submit-btn {
+  background-color: #3B82F6;
+}
+
+.app.dark .sign-in-submit-btn:hover {
+  background-color: #2563EB;
+}
+
+.toggle-form {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6f7378;
+}
+
+.app.dark .toggle-form {
+  color: #94a3b8;
+}
+
+.toggle-form button {
+  background: none;
+  border: none;
+  color: #2557a7;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+}
+
+.toggle-form button:hover {
+  text-decoration: underline;
+}
+
+.app.dark .toggle-form button {
+  color: #3B82F6;
+}
+
+.app.dark .toggle-form button:hover {
+  color: #60a5fa;
+}
+
+.spinner-small {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

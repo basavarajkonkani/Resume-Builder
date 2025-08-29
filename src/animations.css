@@ -1,100 +1,98 @@
-/* Smooth transitions for interactive elements */
-button, input, textarea, select, a {
-  transition: all 0.2s ease;
+/* Animation Keyframes */
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-/* Form item hover animation */
-.form-item {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.form-item:hover {
-  transform: translateY(-2px);
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
-/* Button hover effects */
-.add-btn:hover, .export-btn:hover {
-  transform: translateY(-2px);
+@keyframes fadeInUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-/* Input focus animation */
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-  transform: translateY(-1px);
-}
-
-/* Slide in animation for sections */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.resume-section {
-  animation: slideInUp 0.3s ease-out forwards;
-}
-
-/* Staggered animations for section items */
-.resume-section:nth-child(1) { animation-delay: 0.05s; }
-.resume-section:nth-child(2) { animation-delay: 0.1s; }
-.resume-section:nth-child(3) { animation-delay: 0.15s; }
-.resume-section:nth-child(4) { animation-delay: 0.2s; }
-.resume-section:nth-child(5) { animation-delay: 0.25s; }
-.resume-section:nth-child(6) { animation-delay: 0.3s; }
-.resume-section:nth-child(7) { animation-delay: 0.35s; }
-
-/* Fade in animation for section items */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.section-item {
-  animation: fadeIn 0.3s ease-out forwards;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-/* Error message shake animation */
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-.error-message {
-  animation: shake 0.5s ease-in-out;
+/* Animation Classes */
+.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out;
 }
 
-/* Smooth theme transition */
-.app, .form-container, .resume-preview {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out;
 }
 
-/* Skill tag hover effect */
-.skill-tag {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.animate-slideIn {
+  animation: slideIn 0.5s ease-out;
 }
 
-.skill-tag:hover {
-  transform: translateY(-2px);
+.animate-slideDown {
+  animation: slideDown 0.5s ease-out;
 }
 
-/* Section header color transition */
-.section-header h3, .section-title {
-  transition: color 0.3s ease;
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out;
 }
 
-/* Responsive transition */
-.app-container, .form-section, .preview-section {
-  transition: all 0.3s ease;
+.animate-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
 }
 
-/* Remove button hover animation */
-.remove-btn:hover {
-  transform: scale(1.05);
+/* Delayed Animations */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Animation Duration */
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+.duration-700 {
+  animation-duration: 700ms;
+}
+
+.duration-1000 {
+  animation-duration: 1000ms;
 }
