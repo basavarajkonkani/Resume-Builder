@@ -29,7 +29,7 @@ function App() {
   
   // State for loading
   const [loading, setLoading] = useState(false);
-  
+
   // Available templates
   const templates = [
     { 
@@ -80,7 +80,11 @@ function App() {
   useEffect(() => {
     const savedData = localStorage.getItem('resumeData');
     if (savedData) {
-      setResumeData(JSON.parse(savedData));
+      try {
+        setResumeData(JSON.parse(savedData));
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+      }
     }
     
     const savedTemplate = localStorage.getItem('selectedTemplate');
@@ -97,7 +101,11 @@ function App() {
 
   // Save data to localStorage whenever resumeData changes
   useEffect(() => {
-    localStorage.setItem('resumeData', JSON.stringify(resumeData));
+    try {
+      localStorage.setItem('resumeData', JSON.stringify(resumeData));
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
   }, [resumeData]);
   
   // Save selected template to localStorage
@@ -195,15 +203,97 @@ function App() {
     
     import('html2pdf.js').then(html2pdf => {
       const element = document.querySelector('.resume-preview');
+      
+      // Create a clone of the element to modify for PDF export
+      const cloneElement = element.cloneNode(true);
+      
+      // Add comprehensive print-specific styles to ensure dark text and proper contrast
+      const printStyles = document.createElement('style');
+      printStyles.textContent = `
+        /* Reset all elements to have maximum contrast */
+        * {
+          color: #000000 !important;
+          background-color: #ffffff !important;
+          font-family: Arial, Helvetica, sans-serif !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
+        
+        /* Ensure all text elements are pure black */
+        .resume-name, .section-title, .item-title, .item-subtitle, 
+        .item-description, .contact-info p, .skill-tag, .language-name,
+        .language-proficiency, .item-date {
+          color: #000000 !important;
+          background-color: #ffffff !important;
+          font-weight: 700 !important;
+        }
+        
+        /* Darken section titles and borders */
+        .section-title {
+          font-weight: 800 !important;
+          border-bottom: 3px solid #000000 !important;
+        }
+        
+        .section-title::before {
+          background: #000000 !important;
+        }
+        
+        /* Darken list indicators */
+        .section-item::before {
+          background: #000000 !important;
+        }
+        
+        /* Ensure skill tags and language items have proper contrast */
+        .skill-tag, .language-item {
+          background-color: #e0e0e0 !important;
+          border: 1px solid #000000 !important;
+          color: #000000 !important;
+        }
+        
+        /* Darken proficiency indicators */
+        .language-proficiency.beginner { color: #000000 !important; }
+        .language-proficiency.intermediate { color: #000000 !important; }
+        .language-proficiency.advanced { color: #000000 !important; }
+        .language-proficiency.fluent { color: #000000 !important; }
+        .language-proficiency.native { color: #000000 !important; }
+        
+        /* Remove any transparency */
+        * {
+          opacity: 1 !important;
+        }
+      `;
+      cloneElement.appendChild(printStyles);
+      
       const opt = {
-        margin: 10,
+        margin: [10, 5, 10, 5],
         filename: `${resumeData.fullName || 'resume'}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        image: { type: 'jpeg', quality: 1.0 },
+        html2canvas: { 
+          scale: 3, // Increased scale for better quality
+          useCORS: true,
+          logging: false,
+          letterRendering: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          removeContainer: true
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait',
+          compress: false,
+          precision: 16
+        },
+        fontFaces: [
+          { family: 'Arial', weight: 400 },
+          { family: 'Arial', weight: 700 },
+          { family: 'Arial', weight: 800 }
+        ]
       };
       
-      html2pdf.default().set(opt).from(element).save().then(() => {
+      html2pdf.default().set(opt).from(cloneElement).save().then(() => {
         setLoading(false);
         showNotification('Resume exported successfully!', 'success');
       }).catch(err => {
@@ -211,6 +301,10 @@ function App() {
         showNotification('Failed to export resume', 'error');
         console.error(err);
       });
+    }).catch(error => {
+      setLoading(false);
+      showNotification('Failed to load export module', 'error');
+      console.error(error);
     });
   };
   
@@ -246,7 +340,7 @@ function App() {
   // Fill with sample data
   const fillSampleData = () => {
     if (window.confirm('This will replace your current data with sample data. Continue?')) {
-      setResumeData({
+      const sampleData = {
         fullName: 'John Doe',
         email: 'john.doe@example.com',
         phone: '(123) 456-7890',
@@ -329,26 +423,11 @@ function App() {
           { id: 2, name: 'Spanish', proficiency: 'Advanced' },
           { id: 3, name: 'French', proficiency: 'Intermediate' }
         ]
-      });
+      };
       
+      setResumeData(sampleData);
       showNotification('Sample data loaded', 'success');
     }
-  };
-  
-  // Generate template preview style
-  const getTemplatePreviewStyle = (templateId) => {
-    // Use the SVG template images
-    return {
-      backgroundImage: `url(/templates/${templateId}.svg)`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white',
-      fontWeight: 'bold'
-    };
   };
 
   return (
@@ -369,35 +448,33 @@ function App() {
         </div>
       </header>
       
-      <div className="main-actions">
-        <button className="action-btn" onClick={fillSampleData}>
-          Fill with Sample Data
+      <div className="quick-actions">
+        <button className="action-btn primary" onClick={fillSampleData}>
+          <span className="btn-icon">📋</span> Fill with Sample Data
         </button>
         <button className="action-btn" onClick={clearResumeData}>
-          Clear All Data
+          <span className="btn-icon">🗑️</span> Clear All Data
         </button>
       </div>
       
-      <h2>Select a Template</h2>
-      <div className="templates-grid">
-        {templates.map(template => (
-          <div 
-            key={template.id} 
-            className={`template-card ${selectedTemplate === template.id ? 'selected' : ''}`}
-            onClick={() => setSelectedTemplate(template.id)}
-          >
+      <div className="template-selection-container">
+        <h2>Choose a Template Style</h2>
+        <div className="templates-grid">
+          {templates.map(template => (
             <div 
-              className="template-preview" 
-              style={getTemplatePreviewStyle(template.id)}
+              key={template.id} 
+              className={`template-card ${selectedTemplate === template.id ? 'selected' : ''}`}
+              onClick={() => setSelectedTemplate(template.id)}
             >
-              {template.name}
+              <div className="template-preview" style={{background: template.color}}>
+                {template.name}
+              </div>
+              <div className="template-info">
+                <h3>{template.name}</h3>
+              </div>
             </div>
-            <div className="template-info">
-              <h3>{template.name}</h3>
-              <p>{template.description}</p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
       
       <div className="app-container">
@@ -414,6 +491,11 @@ function App() {
         
         <div className="preview-section">
           <h2>Resume Preview</h2>
+          <div className="preview-actions">
+            <button className="action-btn" onClick={exportToPDF}>
+              <span className="btn-icon">📥</span> Download PDF
+            </button>
+          </div>
           <ResumePreview 
             resumeData={resumeData} 
             theme={theme} 
